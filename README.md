@@ -414,3 +414,93 @@ nc 127.0.0.1 8080
 | RDP       | 3389 | TCP     | Remote Desktop Protocol |
 
 ---
+
+# DNS (Domain Name System)
+
+## What is DNS?
+- DNS = **Domain Name System**  
+- It translates **human-readable names** (`google.com`) into **IP addresses** (`142.250.183.238`).  
+- Often called the "phonebook of the internet."
+
+---
+
+## How DNS Works
+1. User enters `example.com` in a browser.
+2. Query goes to a **DNS Resolver** (e.g., ISP DNS or Google 8.8.8.8).
+3. Resolver asks the **Root Server** → "Where is `.com`?"
+4. Root Server replies: "Ask the `.com` TLD server."
+5. Resolver asks the **TLD Server** → "Where is `example.com`?"
+6. TLD replies: "Ask the Authoritative Server."
+7. Authoritative Server returns the IP address: `203.0.113.10`.
+8. Resolver gives the IP to the browser → connection established.
+
+---
+
+## Important Components
+- **Resolver**: Middleman that queries on your behalf.  
+- **Root DNS Servers**: Top of the hierarchy (13 identities: A–M).  
+- **TLD Servers**: Handle `.com`, `.org`, `.in`, etc.  
+- **Authoritative DNS Servers**: Store the actual records for your domain.  
+
+---
+
+## DNS Records
+| Record | Purpose | Example |
+|--------|---------|---------|
+| **A** | IPv4 Address | `example.com → 203.0.113.10` |
+| **AAAA** | IPv6 Address | `example.com → 2001:db8::1` |
+| **CNAME** | Alias/Redirect | `blog.example.com → example.com` |
+| **MX** | Mail Server | `example.com → mail.example.com` |
+| **NS** | Nameserver | `ns1.example.com` |
+| **TXT** | Extra info (SPF, DKIM) | `"v=spf1 include:_spf.google.com"` |
+| **PTR** | Reverse lookup | `203.0.113.10 → example.com` |
+
+---
+
+## Caching and TTL
+- **TTL (Time To Live)**: Defines how long a record stays in cache.  
+- DNS results are cached at:
+  1. Browser level
+  2. Operating System
+  3. Resolver/ISP
+
+Example: If TTL = 300 seconds, resolvers will refresh every 5 minutes.
+
+---
+
+## Queries: Recursive vs Iterative
+- **Recursive Query**: Resolver does all the work and returns the final answer.  
+- **Iterative Query**: Server gives a referral, user must ask the next server.
+
+---
+
+## DNS Propagation
+- When you update a DNS record (e.g., point domain to a new IP), it takes **24–48 hours** to update worldwide.  
+- Reason: Different caches (resolvers, browsers, OS) expire at different times.  
+
+---
+
+## Root Servers & Management
+- **13 Root Identities (A–M)** but **1000+ physical servers** worldwide (using Anycast).  
+- Managed by organizations like **ICANN, Verisign, NASA, RIPE NCC, ISC** etc.  
+- **ICANN/IANA** oversees the DNS root zone.  
+- **Registries** manage TLDs (.com, .in).  
+- **Registrars** (GoDaddy, Namecheap) sell domains.  
+- **Authoritative DNS providers** (Cloudflare, AWS Route 53) hold final records.
+
+---
+
+## Hosts File vs DNS
+- **Hosts file** = Local manual mapping (`/etc/hosts` or `C:\Windows\System32\drivers\etc\hosts`).  
+- Checked **before DNS resolution**.  
+- Automatic updates do **not** happen here.  
+- DNS updates only propagate through authoritative servers + resolvers.
+
+---
+
+## Security (DNSSEC)
+- **DNSSEC = DNS Security Extensions**  
+- Adds digital signatures to DNS data.  
+- Prevents attacks like **cache poisoning** or fake records.  
+
+---
