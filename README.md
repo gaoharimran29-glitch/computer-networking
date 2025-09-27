@@ -123,6 +123,120 @@ The OSI model is a **theoretical reference model** that standardizes network fun
 - Both models map to each other; TCP/IP is what the Internet uses  
 - Understanding OSI helps in troubleshooting and learning networking concept
 
+# TCP vs UDP in Transport layer
+
+## Introduction
+- **TCP (Transmission Control Protocol)** → Reliable, connection-oriented protocol.  
+- **UDP (User Datagram Protocol)** → Fast, connectionless protocol.  
+
+---
+
+## TCP Header Structure
+- Source Port
+- Destination Port
+- Sequence Number
+- Acknowledgment Number
+- Flags (SYN, ACK, FIN, RST, PSH, URG)
+- Window Size
+- Checksum
+- Urgent Pointer
+
+---
+
+## TCP Flags Explained
+| Flag  | Meaning | Example |
+|-------|----------|---------|
+| SYN   | Start connection (synchronize) | "Hello, let's talk" |
+| ACK   | Acknowledge received data | "Got it ✅" |
+| FIN   | Finish connection | "Bye 👋" |
+| RST   | Reset connection | "Error ❌, start over" |
+| PSH   | Push data immediately | "Send quickly ⚡" |
+| URG   | Urgent data | "Emergency 🚨" |
+
+👉 TCP = Full rishta system (proposal → confirm → bye).
+
+---
+
+## UDP Header Structure
+- Source Port
+- Destination Port
+- Length
+- Checksum
+
+---
+
+## Why No Flags in UDP?
+- No handshake  
+- No connection management  
+- No sequencing  
+- Just **fast delivery** → "fire and forget" model  
+
+👉 UDP = "Arre sunoo!" → Bhej diya, ab suno ya ignore karo, koi farq nahi.
+
+---
+
+## TCP vs UDP Comparison
+
+| Feature            | TCP                         | UDP                       |
+|--------------------|-----------------------------|---------------------------|
+| Connection setup   | SYN/ACK handshake           | No handshake              |
+| Reliability        | ACK, Retransmission         | Best effort (no ACK)      |
+| Order              | Sequence numbers            | No order                  |
+| Flags              | SYN, ACK, FIN, RST, PSH…    | ❌ No flags               |
+| Speed              | Slower (heavy header)       | Faster (light header)     |
+| Use Cases          | Web (HTTP/HTTPS), Email     | Video/Voice streaming, Gaming |
+
+---
+
+# Playing with TCP and UDP
+
+## Tools Used
+- **Netcat (nc / ncat)** → Send & receive TCP/UDP packets
+- **Wireshark** → Packet analysis (optional but recommended)
+- **curl / nslookup / dig** → For testing TCP & UDP protocols
+
+---
+
+## 1. TCP Server–Client Test
+
+### Server
+
+```bash
+nc -l -p 8080
+```
+
+1. -l → Listen mode.
+2. -p 8080 → Port number 8080 pe wait karega.
+3. Your terminal should stucked
+4. Open new terminal and use below command
+
+### Client
+
+```bash
+nc 127.0.0.1 8080
+```
+
+5. 127.0.0.1 → Localhost (same machine).
+6. Will establish connection in 8080.
+7. Background TCP 3-way handshake (SYN → SYN-ACK → ACK).
+8. Now if you type in server or client any thing it will show at both point.
+9. For UDP connection just use -u also and same command.
+
+## Real-World Examples
+- **TCP**:  
+  - HTTP (websites)  
+  - HTTPS (secure websites)  
+  - SMTP/IMAP (emails)  
+  - FTP (file transfer)  
+
+- **UDP**:  
+  - DNS (Domain name queries)  
+  - VoIP (Skype, Zoom calls)  
+  - Online Gaming (PUBG, COD)  
+  - Streaming (YouTube Live, Twitch)
+
+---
+
 # IP Addressing
 
 ## What is an IP Address?
@@ -240,7 +354,7 @@ The OSI model is a **theoretical reference model** that standardizes network fun
 
 ## What is a Port?
 - A **port** is a logical endpoint for communication on a device.  
-- Every IP address can have **65,535 ports** (0-65535).  
+- Every IP address can have **65,536 ports** (0-65535).  
 - Helps **distinguish services** running on the same device.  
 - Example: Web server runs on port `80`, SSH on `22`.
 
