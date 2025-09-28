@@ -176,6 +176,25 @@ The OSI model is a **theoretical reference model** that standardizes network fun
 
 ---
 
+## Steps of 3-Way Handshake
+
+1. **SYN (Synchronize)**
+   - **Client → Server**
+   - The client sends a **SYN packet** to the server with an **initial sequence number (ISN)** to request a connection.
+
+2. **SYN-ACK (Synchronize-Acknowledge)**
+   - **Server → Client**
+   - The server responds with a **SYN-ACK packet**:  
+     - Acknowledges client’s SYN (ACK = client’s ISN + 1)  
+     - Sends its own SYN with server’s ISN
+
+3. **ACK (Acknowledge)**
+   - **Client → Server**
+   - Client acknowledges server’s SYN (ACK = server’s ISN + 1)  
+   - Connection is now **established**, and data transfer can begin.
+
+---
+
 ## UDP Header Structure
 - Source Port
 - Destination Port
