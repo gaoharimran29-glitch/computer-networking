@@ -1,3 +1,22 @@
+### Table of Contents all at once
+
+- [OSI vs TCP/IP Models](#osi-vs-tcpip-models--networking-notes)
+- [7 Layers of OSI Model](#7-layers-of-osi-model)
+- [TCP/IP model](#tcpip-model)
+- [TCP vs UDP in Transport layer](#tcp-vs-udp-in-transport-layer)
+- [Making TCP and UDP Connection](#making-tcp-and-udp-connection)
+- [IP Addressing](#ip-addressing)
+- [Static vs Dynamic IP Addresses](#static-vs-dynamic-ip-addresses)
+- [What is a Port?](#what-is-a-port)
+- [DNS (Domain Name System)](#dns-domain-name-system)
+- [NAT & Firewall](#nat--firewall)
+- [MAC Address](#mac-address)
+- [NIC (Network Interface Card) / Ethernet Card](#nic-network-interface-card--ethernet-card)
+- [Subnetting & Load Balancer](#subnetting--load-balancer)
+- [VPN (Virtual Private Network)](#vpn-virtual-private-network)
+- [Container vs VM Networking Comparison](#container-vs-vm-networking-comparison)
+- [Ethernet](#ethernet)
+
 # OSI vs TCP/IP Models – Networking Notes
 
 ## OSI Model (Open Systems Interconnection)
@@ -188,7 +207,7 @@ The OSI model is a **theoretical reference model** that standardizes network fun
 
 ---
 
-# Playing with TCP and UDP
+# Making tcp and udp connection
 
 ## Tools Used
 - **Netcat (nc / ncat)** → Send & receive TCP/UDP packets
@@ -700,7 +719,7 @@ It works at the **Data Link Layer (Layer 2)** of the OSI model and is essential 
   ifconfig eth0 up
   ```
 
-# NIC (Network Interface Card) / Ethernet Card — Zero to Hero
+# NIC (Network Interface Card) / Ethernet Card
 
 ## Introduction
 - **NIC (Network Interface Card)** is a hardware component that connects your computer or server to a network.  
@@ -908,5 +927,81 @@ It works at the **Data Link Layer (Layer 2)** of the OSI model and is essential 
 - Types: Remote, Site-to-Site, SSL, IPSec, MPLS  
 - Protocols: PPTP, L2TP/IPSec, OpenVPN, WireGuard  
 - Critical for privacy, remote access, and cloud security  
+
+---
+
+# Container vs VM Networking Comparison
+
+| Feature               | Docker Container                    | Virtual Machine (VM)             |
+|----------------------|-----------------------------------|---------------------------------|
+| MAC Address           | Virtual NIC MAC, usually unique per container | Virtual NIC MAC, unique per VM |
+| IP Address            | Bridge / overlay network → unique per container | Virtual network → unique per VM |
+| Overhead              | Low (shares host kernel)           | High (full OS + hypervisor)     |
+| Isolation             | Process-level isolation            | Full OS-level isolation         |
+| Network Type Examples | Bridge, Overlay, Host             | NAT, Bridged, Host-only         |
+
+# Ethernet
+---
+
+## What is Ethernet?
+- Wired LAN communication standard.  
+- Defines **frame structure, cabling (RJ45), speed standards (10/100/1000 Mbps)**.  
+- Works at **OSI Layer 2 (Data Link) + Layer 1 (Physical)**.  
+- Purpose: Devices can communicate reliably and in a standardized way in a LAN.
+
+---
+
+## Ethernet Frame Structure
+- Data is wrapped in **frames** before sending.  
+
+| Field        | Size           | Purpose                                          |
+|-------------|----------------|-------------------------------------------------|
+| Preamble    | 7 bytes        | Synchronization for receiver                    |
+| Dest MAC    | 6 bytes        | Destination device MAC address                  |
+| Src MAC     | 6 bytes        | Source device MAC address                        |
+| EtherType   | 2 bytes        | Protocol identifier (IPv4/IPv6/ARP)           |
+| Payload     | 46-1500 bytes  | Actual data (IP packet, TCP segment, etc.)     |
+| CRC         | 4 bytes        | Error detection                                 |
+
+- **Payload** contains Layer 3 data (IP packet).  
+
+---
+
+## Ethernet Speeds
+
+| Standard       | Speed          | Cabling       |
+|----------------|---------------|---------------|
+| 10BASE-T       | 10 Mbps       | Cat3 / RJ45   |
+| 100BASE-TX     | 100 Mbps      | Cat5          |
+| 1000BASE-T     | 1 Gbps        | Cat5e / Cat6  |
+| 10GBASE-T      | 10 Gbps       | Cat6a / Cat7  |
+
+- **Duplex modes:**  
+  - Half Duplex → Either send OR receive at a time  
+  - Full Duplex → Send AND receive simultaneously  
+
+---
+
+## How Ethernet Works
+1. NIC receives Layer 3 data (IP packet) from OS.  
+2. NIC wraps data in Ethernet frame.  
+3. Frame sent over cable → Switch/hub directs frame.  
+4. Receiving NIC checks **Destination MAC**, verifies CRC, passes data to OS.  
+
+**Practical Example:**  
+- PC1 MAC: `00:1A:2B:3C:4D:01`  
+- PC3 MAC: `00:1A:2B:3C:4D:03`  
+- PC1 wants to send data → Frame Dest MAC = PC3 → Switch sends only to PC3 port → PC3 NIC receives & delivers.  
+
+---
+
+## Ethernet vs NIC
+
+| Feature   | NIC (Ethernet Card)                 | Ethernet (Protocol/Standard)       |
+|-----------|-----------------------------------|----------------------------------|
+| Role      | Hardware device                    | Communication rules + frame format |
+| Layer     | Layer 2 + Layer 1                  | Layer 2 + Layer 1               |
+| MAC       | Has unique MAC                     | Uses MAC for addressing          |
+| Function  | Send/Receive frames                | Defines frame structure & transmission |
 
 ---
