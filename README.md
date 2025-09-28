@@ -504,3 +504,409 @@ Example: If TTL = 300 seconds, resolvers will refresh every 5 minutes.
 - Prevents attacks like **cache poisoning** or fake records.  
 
 ---
+
+# NAT & Firewall
+
+## Introduction
+NAT and Firewalls are two core technologies in networking.  
+- **NAT** solves the IPv4 shortage problem and hides private networks behind a single public IP.  
+- **Firewalls** secure your network by filtering traffic based on rules.
+
+---
+
+# NAT
+
+### Why NAT exists
+- IPv4 addresses are limited.  
+- NAT allows private IPs (e.g., `192.168.x.x`) to communicate with the public internet.  
+- Provides **security** and **flexibility**.
+
+---
+
+### Types of NAT
+1. **Static NAT**  
+   - One private IP ↔ One public IP (1:1 mapping).  
+   - Example: `192.168.1.10 ↔ 203.0.113.5`.
+
+2. **Dynamic NAT**  
+   - Maps private IPs to a pool of public IPs.  
+   - Not always predictable which public IP will be assigned.
+
+3. **PAT (Port Address Translation / NAT Overload)**  
+   - Many private IPs share **one public IP** but with **different source ports**.  
+   - Most common type of NAT in home and office networks.
+
+---
+
+### How PAT (Port Address Translation) works
+Imagine two private devices:  
+- PC1 → `192.168.1.2:5001`  
+- PC2 → `192.168.1.3:5001`  
+
+Both want to connect to `google.com:80`.  
+
+NAT router changes it like this:  
+- `192.168.1.2:5001 → 203.0.113.5:40001`  
+- `192.168.1.3:5001 → 203.0.113.5:40002`  
+
+When replies come back:  
+- `203.0.113.5:40001 → 192.168.1.2:5001`  
+- `203.0.113.5:40002 → 192.168.1.3:5001`  
+
+✔ This way multiple private devices share the same public IP.
+
+---
+
+### NAT Table Example
+| Private IP:Port     | Public IP:Port    | Destination         |
+|----------------------|-------------------|---------------------|
+| 192.168.1.2:5001    | 203.0.113.5:40001 | google.com:80       |
+| 192.168.1.3:5001    | 203.0.113.5:40002 | google.com:80       |
+
+---
+
+# Firewall
+
+### What is a Firewall?
+A **firewall** is a security system that monitors and controls traffic based on **rules**.  
+It acts like a security guard at the gate.
+
+---
+
+### Types of Firewalls
+1. **Packet-filtering firewall**  
+   - Checks source IP, destination IP, port.  
+
+2. **Stateful firewall**  
+   - Tracks connection states (e.g., established or new).  
+
+3. **Application firewall**  
+   - Filters at application level (HTTP, FTP, etc.).  
+
+4. **Next-Gen Firewall (NGFW)**  
+   - Combines packet + stateful + deep inspection.  
+
+---
+
+### How Firewalls Work
+- Rules are defined like:  
+  - Allow: `TCP 80 (HTTP)`  
+  - Deny: `TCP 23 (Telnet)`  
+- Incoming/outgoing traffic must pass through firewall checks.  
+- Can be **host-based** (on a server/PC) or **network-based** (on a router/firewall appliance).
+
+---
+
+# NAT vs Firewall
+| Feature         | NAT                                   | Firewall                                |
+|-----------------|---------------------------------------|-----------------------------------------|
+| Purpose         | Translate IPs (private ↔ public)     | Allow/Block traffic                     |
+| Security        | Provides basic hiding                | Strong security enforcement             |
+| Common in       | Routers, ISPs, Cloud Gateways        | Routers, Firewalls, Servers             |
+
+---
+
+# MAC Address
+
+## Introduction
+A **MAC (Media Access Control) address** is a unique identifier assigned to every network interface card (NIC).  
+It works at the **Data Link Layer (Layer 2)** of the OSI model and is essential for local network communication.
+
+---
+
+## What is a MAC Address?
+- A **48-bit number** (6 bytes) usually written in hexadecimal:
+  - Example: `00:1A:2B:3C:4D:5E`
+- Burned into the NIC during manufacturing.
+- Often called a **hardware address** or **physical address**.
+
+---
+
+## Why is MAC needed?
+- **Device identification inside a LAN** → Switches use MAC to forward frames.
+- **Delivery guarantee** → IP addresses are logical; actual delivery on LAN requires MAC.
+- **Tracking & security** → Access control lists, filtering, and device monitoring use MAC.
+- **Virtualization** → Each VM/container needs a unique MAC for networking.
+
+---
+
+## Format of MAC Address
+- 6 groups of 2 hex digits (total 48 bits).
+- Example: `AA:BB:CC:DD:EE:FF`
+- First 24 bits = **OUI (Organizationally Unique Identifier)** → identifies manufacturer.
+- Last 24 bits = device-specific.
+
+---
+
+## How MAC is used in networking
+
+### LAN communication
+- Devices talk via IP, but final delivery in LAN happens using MAC.
+- Example:
+  - PC1 → `192.168.1.10 (AA:BB:CC:11:22:33)`
+  - PC2 → `192.168.1.20 (DD:EE:FF:44:55:66)`
+  - PC1 sends ping to PC2 → ARP finds PC2’s MAC → Frame delivered to `DD:EE:FF:44:55:66`.
+
+### Switches and MAC tables
+- Switch learns which MAC is on which port (MAC address table).
+- Uses this to forward traffic only to correct port (not broadcast).
+
+### Wi-Fi and wireless networks
+- Access Points (APs) identify devices by MAC.
+- Wi-Fi authentication and filtering can be based on MAC.
+
+### ISP authentication and MAC filtering
+- Some ISPs bind service to customer’s router MAC.
+- Routers/Access Points can block/allow devices by MAC.
+
+### Tracking and monitoring
+- Airports/malls track customers’ phones via MAC when Wi-Fi is on.
+- Each beacon frame your phone sends includes MAC.
+
+### Virtualization and cloud
+- VMs and containers get unique virtual MACs.
+- AWS, Azure, GCP assign MAC addresses to network interfaces.
+
+---
+
+## Relation between MAC and IP (ARP)
+- **IP = Logical address (Layer 3)**  
+- **MAC = Physical address (Layer 2)**  
+- Mapping happens using **ARP (Address Resolution Protocol)**:
+  - “Who has IP 192.168.1.20? Tell 192.168.1.10.”
+  - Response: “192.168.1.20 is at MAC DD:EE:FF:44:55:66.”
+
+---
+
+## Is MAC limited like IP?
+- **IPv4 is limited** (32-bit → ~4.3 billion addresses).  
+- **MAC is larger** (48-bit → ~281 trillion possible addresses).  
+- Practically, manufacturers won’t run out soon.  
+- Newer standards (EUI-64) extend MAC to 64 bits if ever required.  
+- So **MAC exhaustion is not a concern**, unlike IPv4.
+
+---
+
+## MAC Spoofing
+- Although factory-assigned, MAC can be changed at OS/driver level.
+- **Why spoof?**
+  - Privacy & anonymity on public Wi-Fi.
+  - Bypass MAC filtering.
+  - Security testing.
+- **Example (Linux):**
+  ```bash
+  ifconfig eth0 down
+  ifconfig eth0 hw ether 00:11:22:33:44:55
+  ifconfig eth0 up
+  ```
+
+# NIC (Network Interface Card) / Ethernet Card — Zero to Hero
+
+## Introduction
+- **NIC (Network Interface Card)** is a hardware component that connects your computer or server to a network.  
+- It can be **wired** (Ethernet card) or **wireless** (Wi-Fi card).  
+- Each NIC has a **unique MAC address** to identify it in the network.
+
+---
+
+## What is NIC / Ethernet Card?
+- NIC = Network Interface Card  
+- Ethernet Card = Wired NIC (uses RJ45 port)  
+- Provides **physical connection** between device and network.  
+- Works at **Layer 2 (Data Link Layer)** of OSI model.
+
+---
+
+## Functions of NIC
+1. **Data Link Layer communication**: Handles sending and receiving frames.  
+2. **Digital ↔ Electrical / Wireless conversion**: Converts computer data into signals for network.  
+3. **Communication management**:
+   - Receive packets from network → deliver to OS.  
+   - Send packets from OS → transmit to network.  
+4. **Duplex modes**:
+   - Half duplex: send or receive at a time  
+   - Full duplex: send & receive simultaneously  
+
+---
+
+## Types of NIC
+
+| Type          | Description                          | Example                     |
+|---------------|--------------------------------------|-----------------------------|
+| Wired NIC     | Ethernet card with RJ45 port         | Intel Gigabit NIC           |
+| Wireless NIC  | Wi-Fi card                           | TP-Link Wi-Fi Adapter       |
+| Virtual NIC   | Software-based NIC for VMs / Docker | VMware NIC, vEthernet (Hyper-V) |
+
+---
+
+## Ethernet Card
+- **Ethernet Card = Wired NIC**  
+- Connects via RJ45 cable (Cat5/Cat6) to LAN.  
+- Usually built-in in desktops, but can be external PCI/PCIe card.  
+- Speeds: 10/100/1000 Mbps (Gigabit).  
+- Handles **Layer 2 frame delivery** on wired network.
+
+---
+
+## MAC Address and NIC
+- Each NIC has a **unique MAC address** (hardware address).  
+- Example: `00:1A:2B:3C:4D:5E`  
+- MAC allows LAN devices to **identify each other**.  
+- Essential for **packet delivery in local networks**.
+
+---
+
+## NIC in Packet Flow
+- Packet journey:
+  1. Application Layer → TCP segment  
+  2. TCP Layer → IP packet  
+  3. **NIC** → Wrap IP packet in Ethernet frame with Source MAC + Destination MAC  
+  4. Physical Layer → Transmit over cable or Wi-Fi  
+- NIC is the **bridge between OS and network**.
+
+---
+
+## Real-Life Example
+- Your PC connects to Wi-Fi / LAN via NIC.  
+- Router sees your device’s **MAC address** via NIC.  
+- Faulty NIC → PC cannot communicate on network.
+
+---
+
+## Summary
+- **NIC = Network Interface Card**  
+- **Ethernet Card = Wired NIC**  
+- Layer 2 device: converts digital data to physical signals.  
+- Full duplex or half duplex communication.  
+- Unique MAC address for device identification.  
+- Wired NIC uses RJ45; Wireless NIC uses Wi-Fi.  
+
+# Subnetting & Load Balancer
+
+# Subnetting
+
+## What is Subnetting?
+- Subnetting = Dividing a **large IP network into smaller logical networks** (subnets).  
+- Example: `192.168.0.0/16` → `192.168.1.0/24`, `192.168.2.0/24`  
+
+## Why Subnetting is Needed
+1. Efficient IP usage (avoid wastage).  
+2. Security (isolate different network segments).  
+3. Performance (reduce broadcast domain).  
+
+## Subnet Mask & CIDR
+- Subnet mask divides network and host part:  
+  - `/24` = 255.255.255.0 → 256 IPs (254 usable)  
+  - `/25` = 255.255.255.128 → 128 IPs (126 usable)  
+- CIDR = Classless Inter-Domain Routing → short-hand notation `/xx`.  
+
+## Subnetting Example
+- Network: `192.168.1.0/24`  
+- Split into 2 subnets (`/25`):
+  - Subnet 1: `192.168.1.0 - 192.168.1.127` (126 hosts)  
+  - Subnet 2: `192.168.1.128 - 192.168.1.255` (126 hosts)  
+
+---
+
+# Load Balancer
+
+## What is a Load Balancer?
+- Distributes **incoming network traffic** across multiple servers to ensure **availability, reliability, and performance**.
+
+## Why Load Balancers are Needed
+1. Scalability (handle more users).  
+2. High Availability (failover if one server goes down).  
+3. Improved Performance (reduce response time).  
+
+## Types of Load Balancers
+| Type                 | Description                                   | Example                       |
+|----------------------|-----------------------------------------------|-------------------------------|
+| Hardware Load Balancer| Physical device                                | F5 BIG-IP, Cisco ACE          |
+| Software Load Balancer| Software solution                              | Nginx, HAProxy, AWS ELB       |
+
+## Load Balancing Algorithms
+1. **Round Robin** → Requests sent one by one to each server.  
+2. **Least Connections** → Request sent to server with fewest active connections.  
+3. **IP Hash** → Client always mapped to same server.  
+
+## Real-World Example
+- You visit `google.com`:
+  - Load Balancer receives your request.  
+  - It checks available servers and forwards your request.  
+  - You don’t see which server actually served your request.  
+  - Ensures service remains fast and reliable even under heavy traffic.
+
+---
+
+## Lab Exercises
+- **Subnetting**:
+  - Divide `10.0.0.0/16` into 4 subnets.  
+  - Calculate usable IPs for each.  
+- **Load Balancer**:
+  - Set up **Nginx** as reverse proxy load balancer for 2 local web servers.  
+  - Test `round-robin` algorithm.  
+
+---
+
+## **Subnetting Calculation**:
+```text
+# Number of hosts = 2^(32 - subnet mask bits) - 2
+# Example: /26 → 2^(32-26)-2 = 62 usable hosts
+```
+
+# VPN (Virtual Private Network)
+---
+
+## Types of VPN
+| Type                  | Description                                     | Example / Use Case        |
+|-----------------------|-------------------------------------------------|--------------------------|
+| Remote Access VPN      | Single device connects to private network      | Work from home           |
+| Site-to-Site VPN       | Two networks securely connected over internet  | Branch office to HQ      |
+| SSL VPN                | Runs over HTTPS, sometimes clientless          | Browser-based access     |
+| IPSec VPN              | Secure network-level VPN                        | Corporate networks       |
+| MPLS VPN               | Provider-managed VPN for multiple sites        | Enterprise WANs          |
+
+---
+
+## VPN Protocols
+- **PPTP** → Fast, insecure, old protocol.  
+- **L2TP/IPSec** → Secure, slower than PPTP.  
+- **OpenVPN** → Open-source, secure, highly configurable.  
+- **WireGuard** → Modern, fast, simple, secure.  
+- **SSL/TLS VPN** → Web-based, sometimes no client install.  
+
+---
+
+## VPN Encryption & Authentication
+- **Tunnel Encryption** protects data from eavesdropping.  
+- Encryption Algorithms: AES-128, AES-256, Blowfish, ChaCha20.  
+- Authentication: Username/password, certificates, MFA (multi-factor authentication).  
+
+---
+
+## Use Cases in DevOps / Networking
+- Secure access to cloud VPC without public IP exposure.  
+- Remote SSH into servers via VPN instead of opening ports.  
+- Protect CI/CD pipelines accessing internal resources.  
+- Testing geo-restricted staging environments.  
+
+---
+
+## VPN vs NAT / Firewall
+| Feature        | VPN                               | NAT / Firewall                  |
+|----------------|----------------------------------|--------------------------------|
+| Main Role      | Secure remote connectivity        | Address translation / Security |
+| Encryption     | Yes                               | No                             |
+| Visibility     | Internet cannot see real IP       | Internet sees public IP        |
+| Use Case       | Remote work, cloud access         | Home router, packet filtering  |
+
+---
+
+## Summary
+- VPN = **secure tunnel over public internet**  
+- Encrypts traffic + hides real IP  
+- Types: Remote, Site-to-Site, SSL, IPSec, MPLS  
+- Protocols: PPTP, L2TP/IPSec, OpenVPN, WireGuard  
+- Critical for privacy, remote access, and cloud security  
+
+---
