@@ -211,10 +211,6 @@ The OSI model is a **theoretical reference model** that standardizes network fun
 
 ## Tools Used
 - **Netcat (nc / ncat)** → Send & receive TCP/UDP packets
-- **Wireshark** → Packet analysis (optional but recommended)
-- **curl / nslookup / dig** → For testing TCP & UDP protocols
-
----
 
 ## 1. TCP Server–Client Test
 
